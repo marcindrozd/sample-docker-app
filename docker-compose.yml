@@ -1,0 +1,13 @@
+app:
+  build: .
+  command: rails server -p 3000 -b "0.0.0.0"
+  volumes:
+    - .:/sample-docker-app
+  ports:
+    - "3333:3000"
+  links:
+    - postgres
+postgres:
+  image: postgres:9.6.2
+  ports:
+    - "5432"
