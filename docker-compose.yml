@@ -1,13 +1,25 @@
-app:
-  build: .
-  command: rails server -p 3000 -b "0.0.0.0"
-  volumes:
-    - .:/sample-docker-app
-  ports:
-    - "3333:3000"
-  links:
-    - postgres
-postgres:
-  image: postgres:9.6.2
-  ports:
-    - "5432"
+version: "2"
+
+services:
+  postgres:
+    image: postgres:9.6.2
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  web:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: docker/development/Dockerfile
+    volumes:
+      - .:/sample_docker_app
+    env_file:
+      - .env
+    ports:
+      - "3333:3000"
+
+volumes:
+  postgres:
