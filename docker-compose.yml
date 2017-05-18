@@ -8,9 +8,18 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  redis:
+    image: redis:3.2
+    command: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/var/lib/redis/data
+
   web:
     depends_on:
       - postgres
+      - redis
     build:
       context: .
       dockerfile: docker/development/Dockerfile
@@ -21,5 +30,17 @@ services:
     ports:
       - "3333:3000"
 
+  sidekiq:
+    depends_on:
+      - postgres
+      - redis
+    build:
+      context: .
+      dockerfile: docker/development/Dockerfile
+    command: sidekiq -C config/sidekiq.yml
+    volumes:
+      - .:/sample_docker_app
+
 volumes:
   postgres:
+  redis:
