@@ -15,6 +15,9 @@ gem "turbolinks", "~> 5"
 gem "jbuilder", "~> 2.5"
 gem "sidekiq"
 gem "redis-rails"
+gem "crono"
+gem "haml"
+gem "sinatra", require: nil
 
 group :development, :test do
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]

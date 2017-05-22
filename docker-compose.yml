@@ -29,6 +29,8 @@ services:
       - .env
     ports:
       - "3333:3000"
+    environment:
+      DATABASE_HOST: postgres
 
   sidekiq:
     depends_on:
@@ -40,6 +42,19 @@ services:
     command: sidekiq -C config/sidekiq.yml
     volumes:
       - .:/sample_docker_app
+    environment:
+      DATABASE_HOST: postgres
+
+  crono:
+    depends_on:
+      - postgres
+      - redis
+    build:
+      context: .
+      dockerfile: docker/development/Dockerfile
+    command: bundle exec crono
+    environment:
+      DATABASE_HOST: postgres
 
 volumes:
   postgres:
