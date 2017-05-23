@@ -1,5 +1,5 @@
 FROM ruby:2.4.1
-MAINTAINER marcin.drozd@netguru.co
+MAINTAINER marcindrozd@me.com
 
 RUN apt-get update && apt-get install -y \
   build-essential \

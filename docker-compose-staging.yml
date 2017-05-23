@@ -1,0 +1,65 @@
+web:
+  build: .
+  dockerfile: docker/development/Dockerfile
+  links:
+    - postgres
+    - redis
+  volumes:
+    - /home/deploy/apps/sample_docker_app:/sample_docker_app
+  hostname: "server.staging.web"
+  restart: always
+  env_file: /home/deploy/apps/sample_docker_app/shared/secrets.env
+  command: puma -C config/puma.rb
+  cpu_quota: 25000
+  mem_limit: 800M
+  expose:
+    - "3000"
+
+postgres:
+  image: postgres:9.6.2
+  ports:
+    - "5432:5432"
+  expose:
+    - "5432"
+  volumes:
+    - postgres:/var/lib/postgresql/data
+
+redis:
+  image: redis:3.2
+  command: redis-server
+  ports:
+    - "6379:6379"
+  expose:
+    - "6379"
+  volumes:
+    - redis:/var/lib/redis/data
+
+sidekiq:
+  links:
+    - postgres
+    - redis
+  build: .
+  dockerfile: docker/development/Dockerfile
+  env_file: /home/deploy/apps/sample_docker_app/shared/secrets.env
+  command: sidekiq -C config/sidekiq.yml
+  volumes:
+    - /home/deploy/apps/sample_docker_app:/sample_docker_app
+  mem_limit: 900M
+  restart: always
+  environment:
+    DATABASE_HOST: postgres
+
+crono:
+  links:
+    - postgres
+    - redis
+  build: .
+  dockerfile: docker/development/Dockerfile
+  env_file: /home/deploy/apps/sample_docker_app/shared/secrets.env
+  command: bundle exec crono
+  cpu_quota: 100000
+  restart: always
+  volumes:
+    - /home/deploy/apps/sample_docker_app:/sample_docker_app
+  environment:
+    DATABASE_HOST: postgres
