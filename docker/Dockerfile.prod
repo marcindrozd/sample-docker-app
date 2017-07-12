@@ -11,9 +11,11 @@ RUN mkdir -p $APP_PATH
 WORKDIR $APP_PATH
 
 COPY Gemfile Gemfile.lock ./
-RUN gem install bundler && bundle install --jobs 20 --retry 5
+RUN gem install bundler && bundle install --jobs 20 --retry 5 --without development test
 
 COPY . ./
 
+RUN RAILS_ENV=production bundle exec rake assets:precompile
+
 EXPOSE 3000
-CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]

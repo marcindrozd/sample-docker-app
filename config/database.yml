@@ -17,3 +17,8 @@ development:
 test:
   <<: *default
   database: sample_docker_app_test
+
+production:
+  <<: *default
+  username: <%= ENV["POSTGRES_USER"] %>
+  database: sample_docker_app
