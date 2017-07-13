@@ -20,5 +20,5 @@ test:
 
 production:
   <<: *default
-  username: <%= ENV["POSTGRES_USER"] %>
+  username: postgres
   database: sample_docker_app
